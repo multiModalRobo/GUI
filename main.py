@@ -9,7 +9,7 @@ from tkinter import *
 import os
 import ParticipantData
 from datetime import datetime
-
+import shutil
 
 ParticipantData = ParticipantData.ParticipantData()
 root = tk.Tk()
@@ -44,7 +44,7 @@ def CloseGripper():
     print('Close')
     #os.system(r"arduino-cli compile --fqbn arduino:avr:mega C:\Users\nalsadi\Documents\Arduino\CloseGrip")
     os.system(r"arduino-cli upload --port COM3 --fqbn arduino:avr:mega  C:\Users\nalsadi\Documents\Arduino\CloseGrip")
-def VariableGripper(input):
+def VariableGripper(input): # Need a backup txt file with same content as variable.ino, refreshes everyrun to prevent overwrites
     try:
         if(0 > int(input) > 140):
             return False
@@ -52,8 +52,8 @@ def VariableGripper(input):
         return False
     with open(r"C:\Users\nalsadi\Documents\Arduino\Variable\Variable.ino") as f:
         content = f.readlines()
-    content[28] = content[28][0:9] + input + ";"
-    #print(content[28])
+    content[14] = content[14][0:9] + input + ";"
+    print(content[14])
     with open(r'C:\Users\nalsadi\Documents\Arduino\Variable\Variable.txt', 'w') as f:
         for item in content:
             f.write("%s\n" % item)
@@ -61,6 +61,8 @@ def VariableGripper(input):
     os.rename(r'C:\Users\nalsadi\Documents\Arduino\Variable\Variable.txt', r'C:\Users\nalsadi\Documents\Arduino\Variable\Variable.ino')
     os.system(r"arduino-cli compile --fqbn arduino:avr:mega C:\Users\nalsadi\Documents\Arduino\Variable")
     os.system(r"arduino-cli upload --port COM3 --fqbn arduino:avr:mega  C:\Users\nalsadi\Documents\Arduino\Variable")
+    os.remove(r'C:\Users\nalsadi\Documents\Arduino\Variable\Variable.ino')
+    shutil.copyfile(r'C:\Users\nalsadi\Documents\Arduino\Variable\Backup.txt', r'C:\Users\nalsadi\Documents\Arduino\Variable\Variable.ino')
 
 btn = Button(labelframe, text="Open", command=OpenGripper,borderwidth=2, relief="groove",padx=10, pady=10)
 btn.pack()
